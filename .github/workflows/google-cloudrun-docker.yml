@@ -30,13 +30,18 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Build and Push Docker images
+        run: |
+           IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/expense-tracker-repo/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+           docker build -t "$IMAGE" .
+           docker push "$IMAGE"
+
       - name: Build and Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.REGION }}
-          source: .
           flags: >
             --add-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ secrets.GCP_REGION }}:expense-tracker-db
           env_vars: |
