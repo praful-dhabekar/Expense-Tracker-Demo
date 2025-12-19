@@ -21,6 +21,13 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      
+      - name: Checking files and folder
+        run: |
+          echo "File path: "
+          pwd
+          echo "list contain: "
+          ls -ltr
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -33,6 +40,7 @@ jobs:
       - name: Build and Push Docker images
         run: |
            IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/expense-tracker-repo/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+           echo "docker image url: $IMAGE"
            docker build -t "$IMAGE" .
            docker push "$IMAGE"
 
