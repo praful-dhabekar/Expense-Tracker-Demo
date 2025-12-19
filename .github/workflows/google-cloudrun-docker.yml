@@ -37,6 +37,10 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Configure Docker for Artifact Registry 
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+          
       - name: Build and Push Docker images
         run: |
            IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/expense-tracker-repo/${{ env.SERVICE_NAME }}:${{ github.sha }}"
